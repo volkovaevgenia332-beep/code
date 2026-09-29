@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <locale.h>
 
+// защита от магических чисел
 #define INVENTORY_SIZE 10
 #define HOURS_IN_DAY 24
 
@@ -14,6 +15,10 @@
 #define ITEM_LEATHER 7
 #define ITEM_DIAMOND 8
 
+// общее кол-во уникальных предметов
+#define TOTAL_UNIQUE_ITEMS 9
+
+// защита от неправильного ввода(дурака)
 int get_safe_int() {
     int value;
     while (scanf("%d", &value) !=1){
@@ -24,6 +29,7 @@ int get_safe_int() {
     return value;
 }
 
+// вывод содержимого рюкзака на экран
 void print_inventory(const int inv[], int size) {
     for (int i = 0; i < size; i++){
         printf("Слот %d: [%d]", inv[i]);
@@ -31,7 +37,7 @@ void print_inventory(const int inv[], int size) {
             case ITEM_EMPTY:    printf("(Пусто)\n"); break;
             case ITEM_WOOD:     printf("(Дерево)\n"); break;
             case ITEM_STONE:    printf("(Камень)\n"); break;
-            case iTEM_SEEDS:    printf("(Семена)\n"); break;
+            case ITEM_SEEDS:    printf("(Семена)\n"); break;
             case ITEM_IRON:     printf("(Железо)\n"); break;
             case ITEM_GOLD:     printf("(Золото)\n"); break;
             case ITEM_POTION:   printf("(Зелье)\n"); break;
@@ -43,9 +49,11 @@ void print_inventory(const int inv[], int size) {
     }
 }
 
+// основная функция
 int main() {
     setlocale(LC_ALL, "Russian");
 
+    // игровое время по умолчанию
     int current_day = 1;
     int current_hour = 8;
 
@@ -66,14 +74,28 @@ int main() {
     do {
 
         printf("\n======= МЕНЮ ЯДРА ИГРЫ =======\n");
+        printf(" Посмотреть на часы\n");
         printf(" Промотать время (Поработать)\n");
         printf(" Посмотреть инвентарь\n");
         printf(" Положить предмет в слот\n");
         printf(" Выбросить предмет\n");
-        printf(" Сжатие рюкзака\n");
-        printf(" Посмотреть на часы\n");
-        printf(" Посмотреть на часы\n");
-        printf(" Посмотреть на часы\n");
+        printf(" Любимый ресурс\n");
+        printf(" Выход\n");
+        printf(" Выберите действие\n");
+
+        choice = get_safe_int();
+        printf("\n");
+
+        switch(choice) {
+            case 0:
+                printf("ПОКА\n");
+                break;
+            case 1:
+
+
+
+        }
+        
 
     }
 
