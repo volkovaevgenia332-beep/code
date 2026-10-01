@@ -1,11 +1,11 @@
 #include <stdio.h>
 #include <locale.h>
 
-// Р·Р°С‰РёС‚Р° РѕС‚ РјР°РіРёС‡РµСЃРєРёС… С‡РёСЃРµР»
+// защита от магических чисел
 #define INVENTORY_SIZE 10
 #define HOURS_IN_DAY 24
 
-// СЃРїРёСЃРѕРє РїСЂРµРґРјРµС‚РѕРІ РІ РёРіСЂРµ
+// список предметов в игре
 #define ITEM_EMPTY 0 
 #define ITEM_WOOD 1
 #define ITEM_STONE 2
@@ -16,45 +16,45 @@
 #define ITEM_LEATHER 7
 #define ITEM_DIAMOND 8
 
-// РѕР±С‰РµРµ РєРѕР»-РІРѕ СѓРЅРёРєР°Р»СЊРЅС‹С… РїСЂРµРґРјРµС‚РѕРІ
+// общее кол-во уникальных предметов
 #define TOTAL_UNIQUE_ITEMS 9
 
-// Р·Р°С‰РёС‚Р° РѕС‚ РЅРµРїСЂР°РІРёР»СЊРЅРѕРіРѕ РІРІРѕРґР°(РґСѓСЂР°РєР°)
+// защита от неправильного ввода(дурака)
 int get_safe_int() {
     int value;
     while (scanf("%d", &value) !=1) {
-        printf("РћС€РёР±РєР°! Р’РІРµРґРµРЅРѕ РЅРµ С‡РёСЃР»Рѕ. РџРѕР¶Р°Р»СѓР№СЃС‚Р°, РІРІРµРґРёС‚Рµ РєРѕСЂСЂРµРєС‚РЅРѕРµ С‡РёСЃР»Рѕ: ");
+        printf("Ошибка! Введено не число. Пожалуйста, введите корректное число: ");
         while (getchar() != '\n');
     
     }
     return value;
 }
 
-// РІС‹РІРѕРґ СЃРѕРґРµСЂР¶РёРјРѕРіРѕ СЂСЋРєР·Р°РєР° РЅР° СЌРєСЂР°РЅ
+// вывод содержимого рюкзака на экран
 void print_inventory(const int inv[], int size) {
     for (int i = 0; i < size; i++) {
-        printf("РЎР»РѕС‚ %d: [%d]", i, inv[i]);
+        printf("Слот %d: [%d]", i, inv[i]);
         switch (inv[i]) {
-            case ITEM_EMPTY:    printf("(РџСѓСЃС‚Рѕ)\n"); break;
-            case ITEM_WOOD:     printf("(Р”РµСЂРµРІРѕ)\n"); break;
-            case ITEM_STONE:    printf("(РљР°РјРµРЅСЊ)\n"); break;
-            case ITEM_SEEDS:    printf("(РЎРµРјРµРЅР°)\n"); break;
-            case ITEM_IRON:     printf("(Р–РµР»РµР·Рѕ)\n"); break;
-            case ITEM_GOLD:     printf("(Р—РѕР»РѕС‚Рѕ)\n"); break;
-            case ITEM_POTION:   printf("(Р—РµР»СЊРµ)\n"); break;
-            case ITEM_LEATHER:  printf("(РљРѕР¶Р°)\n"); break;
-            case ITEM_DIAMOND:  printf("(РђР»РјР°Р·)\n"); break;
-            default:            printf("(РќРµРёР·РІРµСЃС‚РЅС‹Р№ РїСЂРµРґРјРµС‚)\n"); break;
+            case ITEM_EMPTY:    printf("(Пусто)\n"); break;
+            case ITEM_WOOD:     printf("(Дерево)\n"); break;
+            case ITEM_STONE:    printf("(Камень)\n"); break;
+            case ITEM_SEEDS:    printf("(Семена)\n"); break;
+            case ITEM_IRON:     printf("(Железо)\n"); break;
+            case ITEM_GOLD:     printf("(Золото)\n"); break;
+            case ITEM_POTION:   printf("(Зелье)\n"); break;
+            case ITEM_LEATHER:  printf("(Кожа)\n"); break;
+            case ITEM_DIAMOND:  printf("(Алмаз)\n"); break;
+            default:            printf("(Неизвестный предмет)\n"); break;
 
         }
     }
 }
 
-// РѕСЃРЅРѕРІРЅР°СЏ С„СѓРЅРєС†РёСЏ
+// основная функция
 int main() {
     setlocale(LC_ALL, "Russian");
 
-    // РёРіСЂРѕРІРѕРµ РІСЂРµРјСЏ РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ
+    // игровое время по умолчанию
     int current_day = 1;
     int current_hour = 8;
 
@@ -74,99 +74,99 @@ int main() {
 
     do {
 
-        printf("\n======= РњР•РќР® РЇР”Р Рђ РР“Р Р« =======\n");
-        printf(" РџРѕСЃРјРѕС‚СЂРµС‚СЊ РЅР° С‡Р°СЃС‹\n");
-        printf(" РџСЂРѕРјРѕС‚Р°С‚СЊ РІСЂРµРјСЏ (РџРѕСЂР°Р±РѕС‚Р°С‚СЊ)\n");
-        printf(" РџРѕСЃРјРѕС‚СЂРµС‚СЊ РёРЅРІРµРЅС‚Р°СЂСЊ\n");
-        printf(" РџРѕР»РѕР¶РёС‚СЊ РїСЂРµРґРјРµС‚ РІ СЃР»РѕС‚\n");
-        printf(" Р’С‹Р±СЂРѕСЃРёС‚СЊ РїСЂРµРґРјРµС‚\n");
-        printf(" Р›СЋР±РёРјС‹Р№ СЂРµСЃСѓСЂСЃ\n");
-        printf(" Р’С‹С…РѕРґ\n");
-        printf(" Р’С‹Р±РµСЂРёС‚Рµ РґРµР№СЃС‚РІРёРµ\n");
+        printf("\n======= МЕНЮ ЯДРА ИГРЫ =======\n");
+        printf(" 1. Посмотреть на часы\n");
+        printf(" 2. Промотать время (Поработать)\n");
+        printf(" 3. Посмотреть инвентарь\n");
+        printf(" 4. Положить предмет в слот\n");
+        printf(" 5. Выбросить предмет\n");
+        printf(" 6. Любимый ресурс\n");
+        printf(" 7. Выход\n");
+        printf(" 8. Выберите действие: \n");
 
         choice = get_safe_int();
         printf("\n");
 
         switch(choice) {
             case 0:
-                printf("Р—Р°РІРµСЂС€РµРЅРёРµ СЂР°Р±РѕС‚С‹ РїСЂРѕРіСЂР°РјРјС‹. Р”Рѕ РІСЃС‚СЂРµС‡Рё РІ РёРіСЂРµ!\n");
+                printf("Завершение работы программы. До встречи в игре!\n");
                 break;
             case 1:
-                printf("РўРµРєСѓС‰РµРµ РІСЂРµРјСЏ: Р”РµРЅСЊ %d, %02d:00\n", current_day, current_hour);
+                printf("Текущее время: День %d, %02d:00\n", current_day, current_hour);
                 break;
             case 2:{
-                printf("РЎРєРѕР»СЊРєРѕ С‡Р°СЃРѕРІ РІС‹ С…РѕС‚РёС‚Рµ РїРѕСЂР°Р±РѕС‚Р°С‚СЊ?");
+                printf("Сколько часов вы хотите поработать?");
                 int hours_to_work = get_safe_int();
 
                 if (hours_to_work < 0) {
-                    printf("РћС€РёР±РєР°! Р’СЂРµРјСЏ СЂР°Р±РѕС‚С‹ РЅРµ РјРѕР¶РµС‚ Р±С‹С‚СЊ РѕС‚СЂРёС†Р°С‚РµР»СЊРЅС‹Рј.\n");
+                    printf("Ошибка! Время работы не может быть отрицательным.\n");
                 } else {
                     current_hour += hours_to_work;
                     current_day += current_hour / HOURS_IN_DAY;
                     current_hour = current_hour % HOURS_IN_DAY;
-                    printf("Р’С‹ СѓСЃРїРµС€РЅРѕ РїРѕСЂР°Р±РѕС‚Р°Р»Рё! Р’СЂРµРјСЏ РїРµСЂРµРјРѕС‚Р°РЅРѕ.\n");
+                    printf("Вы успешно поработали! Время перемотано.\n");
                 }
                 break;
             }
             case 3:
-                printf("===== РЎРѕРґРµСЂР¶РёРјРѕРµ РёРЅРІРµРЅС‚Р°СЂСЏ =====\n");
+                printf("===== Содержимое инвентаря =====\n");
                 print_inventory(inventory, INVENTORY_SIZE);
                 break;
 
             case 4: {
-                printf("Р’РІРµРґРёС‚Рµ РёРЅРґРµРєСЃ СЃР»РѕС‚Р° (РѕС‚ 0 РґРѕ %d): ", INVENTORY_SIZE - 1);
+                printf("Введите индекс слота (от 0 до %d): ", INVENTORY_SIZE - 1);
                 int slot_index = get_safe_int();
 
                 if (slot_index < 0 || slot_index >= INVENTORY_SIZE) {
-                    printf("РћС€РёР±РєР°! РќРµРІРµСЂРЅС‹Р№ РёРЅРґРµРєСЃ. Р”РѕРїСѓСЃС‚РёРјС‹Р№ РґРёР°РїР°Р·РѕРЅ: 0 - %d\n", INVENTORY_SIZE - 1);
+                    printf("Ошибка! Неверный индекс. Допустимый диапазон: 0 - %d\n", INVENTORY_SIZE - 1);
                     break;
                 }
 
-                printf("Р’РІРµРґРёС‚Рµ Р°Р№РґРё РїСЂРµРґРјРµС‚Р° (1-Р”РµСЂРµРІРѕ, 2-РљР°РјРµРЅСЊ, 3-РЎРµРјРµРЅР°, 4-Р–РµР»РµР·Рѕ, 5-Р—РѕР»РѕС‚Рѕ, 6-Р—РµР»СЊРµ, 7-РљРѕР¶Р°, 8-РђР»РјР°Р·):");
+                printf("Введите айди предмета (1-Дерево, 2-Камень, 3-Семена, 4-Железо, 5-Золото, 6-Зелье, 7-Кожа, 8-Алмаз):");
                 int item_id = get_safe_int();
 
                 if (item_id < 0 || item_id > ITEM_DIAMOND) {
-                    printf("РћС€РёР±РєР°! РџСЂРµРґРјРµС‚Р° СЃ С‚Р°РєРёРј id РЅРµ СЃСѓС‰РµСЃС‚РІСѓРµС‚.\n");
+                    printf("Ошибка! Предмета с таким id не существует.\n");
                 } else {
                     inventory[slot_index] = item_id;
-                    printf("РџСЂРµРґРјРµС‚ СѓСЃРїРµС€РЅРѕ РїРѕРјРµС‰РµРЅ РІ СЃР»РѕС‚ %d. \n", slot_index);
+                    printf("Предмет успешно помещен в слот %d. \n", slot_index);
                 }
                 break;
             }
             
             case 5: {
-                printf("Р’РІРµРґРёС‚Рµ РёРЅРґРµРєСЃ СЃР»РѕС‚Р° РґР»СЏ РѕС‡РёСЃС‚РєРё (РѕС‚ 0 РґРѕ %d): ", INVENTORY_SIZE - 1);
+                printf("Введите индекс слота для очистки (от 0 до %d): ", INVENTORY_SIZE - 1);
                 int slot_index = get_safe_int();
 
                 if (slot_index < 0 || slot_index >= INVENTORY_SIZE) {
-                    printf("РћС€РёР±РєР°! РќРµРІРµСЂРЅС‹Р№ РёРЅРґРµРєСЃ СЃР»РѕС‚Р°. \n");    
+                    printf("Ошибка! Неверный индекс слота. \n");    
                 } else {
                     inventory[slot_index] = ITEM_EMPTY;
-                    printf("РЎР»РѕС‚ %d РѕС‡РёС‰РµРЅ. \n", slot_index);
+                    printf("Слот %d очищен. \n", slot_index);
                 }
                 break;
             }
             case 6: {
-                printf("=== РџРѕРёСЃРє Р»СЋР±РёРјРѕРіРѕ СЂРµСЃСѓСЂСЃР° ===\n");
-                printf("РўРµРєСѓС‰РёР№  РјР°СЃСЃРёРІ РёРЅРІРµРЅС‚Р°СЂСЏ: \n");
+                printf("=== Поиск любимого ресурса ===\n");
+                printf("Текущий  массив инвентаря: \n");
                 print_inventory(inventory, INVENTORY_SIZE);
 
-                // РјР°СЃСЃРёРІ СЃС‡РµС‚С‡РёРє
+                // массив счетчик
                 int counts[TOTAL_UNIQUE_ITEMS] = {0};
 
-                // РїРѕРґСЃС‡РµС‚ СЃРєРѕР»СЊРєРѕ СЂР°Р· РІСЃС‚СЂРµС‡Р°РµС‚СЃСЏ РїСЂРµРґРјРµС‚
+                // подсчет сколько раз встречается предмет
                 for (int i = 0; i < INVENTORY_SIZE; i++) {
                     int current_id = inventory[i];
                     
-                    //РёРіРЅРѕСЂ РїСѓСЃС‚С‹С… СЃР»РѕС‚РѕРІ
+                    //игнор пустых слотов
                     if (current_id != ITEM_EMPTY) {
                         counts[current_id]++;
                     }
                 }
 
-                // РїРѕРёСЃРє РјР°РєСЃРёРјСѓРјР°
-                int max_slots = 0; // РєРѕР»РІРѕ Р»СЋР±РёРј СЃР»РѕС‚РѕРІ
-                int favourite_id = -1; // РёРґ Р»СЋР±РёРј РїСЂРµРґРјРµС‚Р°
+                // поиск максимума
+                int max_slots = 0; // колво любим слотов
+                int favourite_id = -1; // ид любим предмета
 
                 for (int id = 1; id < TOTAL_UNIQUE_ITEMS; id++) {
                     if (counts[id] > max_slots) {
@@ -175,32 +175,32 @@ int main() {
                     }
                 }
 
-                // РІС‹РІРѕРґ СЂРµР·СѓР»СЊС‚Р°С‚Р°
-                printf("\n Р РµР·СѓР»СЊС‚Р°С‚ Р°РЅР°Р»РёР·Р°: \n");
+                // вывод результата
+                printf("\n Результат анализа: \n");
                 if (favourite_id == -1 || max_slots == 0){
-                    printf("Р СЋРєР·Р°Рє РїСѓСЃС‚! Р›СЋР±РёРјС‹Р№ РїСЂРµРґРјРµС‚ РЅРµ РЅР°Р№РґРµРЅ.\n");
+                    printf("Рюкзак пуст! Любимый предмет не найден.\n");
                 } else {
-                    printf("Р›СЋР±РёРјС‹Р№ СЂРµСЃСѓСЂСЃ РёРјРµРµС‚ id: [%d]\n", favourite_id);
+                    printf("Любимый ресурс имеет id: [%d]\n", favourite_id);
 
-                    // РІС‹РІРѕРґ С‚РµРєСЃС‚РѕРІРѕРіРѕ РЅР°Р·РІР°РЅРёСЏ РїСЂРµРґРјРµС‚Р°
-                    printf("РЅР°Р·РІР°РЅРёРµ РїСЂРµРґРјРµС‚Р°: ");
+                    // вывод текстового названия предмета
+                    printf("название предмета: ");
                     switch (favourite_id) {
-                        case ITEM_WOOD:     printf("(Р”РµСЂРµРІРѕ)\n"); break;
-                        case ITEM_STONE:    printf("(РљР°РјРµРЅСЊ)\n"); break;
-                        case ITEM_SEEDS:    printf("(РЎРµРјРµРЅР°)\n"); break;
-                        case ITEM_IRON:     printf("(Р–РµР»РµР·Рѕ)\n"); break;
-                        case ITEM_GOLD:     printf("(Р—РѕР»РѕС‚Рѕ)\n"); break;
-                        case ITEM_POTION:   printf("(Р—РµР»СЊРµ)\n"); break;
-                        case ITEM_LEATHER:  printf("(РљРѕР¶Р°)\n"); break;
-                        case ITEM_DIAMOND:  printf("(РђР»РјР°Р·)\n"); break;
+                        case ITEM_WOOD:     printf("(Дерево)\n"); break;
+                        case ITEM_STONE:    printf("(Камень)\n"); break;
+                        case ITEM_SEEDS:    printf("(Семена)\n"); break;
+                        case ITEM_IRON:     printf("(Железо)\n"); break;
+                        case ITEM_GOLD:     printf("(Золото)\n"); break;
+                        case ITEM_POTION:   printf("(Зелье)\n"); break;
+                        case ITEM_LEATHER:  printf("(Кожа)\n"); break;
+                        case ITEM_DIAMOND:  printf("(Алмаз)\n"); break;
                     }
-                    printf("РљРѕР»РёС‡РµСЃС‚РІРѕ Р·Р°РЅРёРјР°РµРјС‹С… СЃР»РѕС‚РѕРІ: %d\n", max_slots);
+                    printf("Количество занимаемых слотов: %d\n", max_slots);
                 }
                 break;
             }
 
             default:
-                printf("РќРµРІРµСЂРЅС‹Р№ РїСѓРЅРєС‚ РјРµРЅСЋ! Р’С‹Р±РµСЂРёС‚Рµ С‡РёСЃР»Рѕ РѕС‚ 0 РґРѕ 6. \n");
+                printf("Неверный пункт меню! Выберите число от 0 до 6. \n");
                 break;
         }
         
