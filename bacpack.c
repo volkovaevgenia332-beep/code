@@ -82,7 +82,7 @@ int main() {
         printf(" 5. Выбросить предмет\n");
         printf(" 6. Любимый ресурс\n");
         printf(" 7. Выход\n");
-        printf(" 8. Выберите действие: \n");
+        printf("Выберите действие: \n");
 
         choice = get_safe_int();
         printf("\n");
