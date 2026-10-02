@@ -1,2 +1,9 @@
 /helloworld.c
 /helloworld.exe
+*.exe
+*.o
+*.out
+.vs/
+.vscode/
+*.log
+*.tmp
