@@ -1,9 +1,13 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include <locale.h>
 
-// защита от магических чисел
+// защита от магических чисел  (константы)
 #define INVENTORY_SIZE 10
 #define HOURS_IN_DAY 24
+#define MAX_ITEMS 10
+#define MAX_NAME_LEN 32
 
 // список предметов в игре
 #define ITEM_EMPTY 0 
@@ -17,7 +21,7 @@
 #define ITEM_DIAMOND 8
 
 // общее кол-во уникальных предметов
-#define TOTAL_UNIQUE_ITEMS 9
+//#define TOTAL_UNIQUE_ITEMS 9
 
 // защита от неправильного ввода(дурака)
 int get_safe_int() {
@@ -27,8 +31,66 @@ int get_safe_int() {
         while (getchar() != '\n');
     
     }
+    while (getchar() != '\n');
     return value;
 }
+
+//безопасное чтение строки без символа переноса строки
+void get_safe_string (char * buffer, int max_len) {
+    fgets(buffer, max_len, stdin);
+    // удаление символа переноса строки \n, который автоматически захватывает fgets
+    buffer[strcspn(buffer, "\n")]= '\0';
+}
+
+//ФУНКЦИИ РАБОТЫ С КАТАЛОГОМ И ИНВЕНТАРЕМ
+
+//загрузка названий предметов из файла или значения по умолч
+void load_item_catalogue (char names[MAX_ITEMS][MAX_NAME_LEN]){
+    FILE *file = open("items.txt", "r");
+    if (file == NULL) {
+        printf("[Предупреждение]: Файл items.txt не найден! Загружены имена по умолчанию.\n");
+        // заполнение по умолчанию (защита от падения проги)
+        strcpy(names[0], "Пусто");
+        strcpy(names[1], "Дерево");
+        strcpy(names[2], "Камень");
+        strcpy(names[3], "Семена_пшеницы");
+        strcpy(names[4], "Железо");
+        strcpy(names[5], "Золото");
+        strcpy(names[6], "Зелье");
+        strcpy(names[7], "Кожа");
+        strcpy(names[8], "Алмаз");
+        strcpy(names[9], "Ткань");
+        return;
+    }
+
+    int id;
+    char temp_name[MAX_NAME_LEN];
+    while (fscanf(file, "%d %31s", &id, temp_name)==2{
+        if (id >= 0 && id < MAX_ITEMS) {
+            strncpy (names[id], temp_name, MAX_NAME_LEN -1);
+            names[id][MAX_NAME_LEN - 1] = '\0';
+        }
+    }
+    fclose(file);
+    printf("[Успех]: Каталог предметов успешно загружен из items.txt. \n");
+}
+
+// показать текущий инвентарь
+void print_inventory (const int inv[], const char names[MAX_ITEMS][MAX_NAME_LEN], int size) {
+    printf ("======= СОДЕРЖИМОЕ ИНВЕНТАРЯ =======\n");
+    for (int i = 0; i < size; i++) {
+        int id = inv[i];
+        if (id >= 0 && id < MAX_ITEMS) {
+            printf("Слот %d: [%d] - %s\n" , i, id, names[id]);
+        } else {
+            printf("Слот %d: [%d] - (Неизвестный предмет)\n", i, id);
+        }
+    }
+}
+
+
+
+
 
 // вывод содержимого рюкзака на экран
 void print_inventory(const int inv[], int size) {
