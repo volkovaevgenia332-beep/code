@@ -165,6 +165,142 @@ void action_favorite_resource(const int inv[], const char names[MAX_ITEMS][MAX_N
     }
 }
 
+//поиск предмета в рюкзаке по названию
+void action_search_by_name(const int inv[], const char names[MAX_ITEMS][MAX_NAME_LEN], int size) {
+    char search_name[MAX_NAME_LEN];
+    printf("Введите текстовое название предмета для поиска: ");
+    get_safe_string(search_name, MAX_NAME_LEN);
+
+    //поиск ID, которому соответствует название в каталоге предметов
+    int target_id = -1;
+    for (int i = 0; i < MAX_ITEMS; i++) {
+        if (strcmp(names[i], search_name) == 0) {
+            target_id = i;
+            break;
+        }
+    }
+
+    if (target_id == -1 || target_id == ITEM_EMPTY) {
+        printf("Предмета с названием '%s' нет в каталоге предметов или этот слот пуст.\n", search_name);
+        return;
+    }
+
+    //поиск этого ID внутри инвентаря игрока
+    int found = 0;
+    printf("Предмет '%s' найден в следующих слотах: ", search_name);
+    for (int i = 0; i < size; i++) {
+        if (inv[i] == target_id) {
+            printf("%d ", i);
+            found = 1;
+        }
+    }
+    
+    if (!found) {
+        printf("вы не носите этот предмет с собой (в инвентаре отсутствует).\n");
+    } else {
+        printf("\n");
+    }
+}
+
+//запись состояния в дневник фермера
+void action_save_to_diary(const char *farmer_name, GameTime t, const int inv[], const char names[MAX_ITEMS][MAX_NAME_LEN], int size) {
+    FILE *file = fopen("diary.txt", "a"); // a — режим дозаписи в конец файла
+    if (file == NULL) {
+        printf("Ошибка! Не удалось открыть или создать файл diary.txt.\n");
+        return;
+    }
+
+    fprintf(file, "=== ЗАПИСЬ В ДНЕВНИКЕ ===\n");
+    fprintf(file, "Фермер: %s\n", farmer_name);
+    fprintf(file, "Время: День %d, %02d:00\n", t.day, t.hour);
+    fprintf(file, "Содержимое рюкзака:\n");
+    for (int i = 0; i < size; i++) {
+        fprintf(file, "  Слот %d: %s\n", i, names[inv[i]]);
+    }
+    fprintf(file, "-------------------------\n\n");
+
+    fclose(file);
+    printf("[Успех]: Запись красиво сохранена в файл diary.txt!\n");
+}
+
+//проверка рецептов крафта
+void action_check_recipes(const int inv[], const char names[MAX_ITEMS][MAX_NAME_LEN], int size) {
+    FILE *fin = fopen("input.txt", "r");
+    FILE *fout = fopen("output.txt", "w"); // w — создание и полная перезапись файла вывода
+
+    if (fin == NULL) {
+        printf("[Ошибка]: Входной файл рецептов input.txt не найден! Нечего обрабатывать.\n");
+        if (fout) fclose(fout);
+        return;
+    }
+    if (fout == NULL) {
+        printf("[Ошибка]: Не удалось создать файл результатов output.txt.\n");
+        fclose(fin);
+        return;
+    }
+
+    // счет текущего количества ресурсов у игрока
+    int player_resources[MAX_ITEMS] = {0};
+    for (int i = 0; i < size; i++) {
+        player_resources[inv[i]]++;
+    }
+
+    char line[128];
+    printf("--- Проверка рецептов крафта ---\n");
+
+    //чтение input.txt построчно
+    while (fgets(line, sizeof(line), fin)) {
+        //удаление технического переноса строки \n
+        line[strcspn(line, "\n")] = '\0';
+        if (strlen(line) == 0) continue;
+
+        char recipe_name[MAX_NAME_LEN] = {0};
+        int required_ids[MAX_ITEMS] = {0}; //массив для подсчета требований рецепта
+        
+        //разбиваю строку, сначала вытаскиваю название до двоеточия
+        char *token = strtok(line, ":");
+        if (token != NULL) {
+            strncpy(recipe_name, token, MAX_NAME_LEN - 1);
+        }
+
+        //вытаскиваю все ID предметов, идущие через пробел после двоеточия
+        token = strtok(NULL, " ");
+        while (token != NULL) {
+            int id = atoi(token);
+            if (id >= 0 && id < MAX_ITEMS) {
+                required_ids[id]++;
+            }
+            token = strtok(NULL, " ");
+        }
+
+        //сравнение требований рецепта с тем, что есть в рюкзаке фермера
+        int has_enough = 1;
+        char missing_report[128] = "";
+
+        for (int id = 0; id < MAX_ITEMS; id++) {
+            if (required_ids[id] > player_resources[id]) {
+                has_enough = 0;
+                //дозапись имени компонента, которого не хватило, в строку
+                strcat(missing_report, names[id]);
+                strcat(missing_report, " ");
+            }
+        }
+
+        //вывод вердикта на экран и дубликат его в выходной файл output.txt
+        if (has_enough) {
+            printf("Рецепт '%s': [ДОСТУПНО]\n", recipe_name);
+            fprintf(fout, "Рецепт '%s': [ДОСТУПНО]\n", recipe_name);
+        } else {
+            printf("Рецепт '%s': [НЕ ХВАТАЕТ РЕСУРСОВ] (Нужно: %s)\n", recipe_name, missing_report);
+            fprintf(fout, "Рецепт '%s': [НЕ ХВАТАЕТ РЕСУРСОВ] (Недостает: %s)\n", recipe_name, missing_report);
+        }
+    }
+
+    fclose(fin);
+    fclose(fout);
+    printf("\n[Успех]: Полный отчет о крафте сохранен в файл output.txt!\n");
+
+    
 
 
 // вывод содержимого рюкзака на экран
