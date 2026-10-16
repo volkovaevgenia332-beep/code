@@ -88,7 +88,82 @@ void print_inventory (const int inv[], const char names[MAX_ITEMS][MAX_NAME_LEN]
     }
 }
 
+// посмотреть на часы
+void action_show_time(GameTime t) {
+    printf("Текущее время: День %d, %02d:00\n", t.day, t.hour);
+}
 
+//промотать время(поработать)
+void action_work(GameTime *t) {
+    printf("Сколько часов вы хотите поработать? ");
+    int hours = get_safe_int();
+    if (hours < 0) {
+        printf("Ошибка! Время работы не может быть отрицательным.\n");
+        return;
+    }
+    t->hour += hours;
+    t->day += t->hour / HOURS_IN_DAY;
+    t->hour = t->hour % HOURS_IN_DAY;
+    printf("Вы успешно поработали! Время перемотано.\n");
+}
+
+//положить предмет в слот
+void action_put_item(int inv[], int size) {
+    printf("Введите индекс слота (от 0 до %d): ", size - 1);
+    int slot = get_safe_int();
+    if (slot < 0 || slot >= size) {
+        printf("Ошибка! Неверный индекс. Допустимый диапазон: 0 - %d\n", size - 1);
+        return;
+    }
+    printf("Введите ID предмета (0-9): ");
+    int id = get_safe_int();
+    if (id < 0 || id >= MAX_ITEMS) {
+        printf("Ошибка! Предмета с таким ID не существует.\n");
+        return;
+    }
+    inv[slot] = id;
+    printf("Предмет успешно помещен в слот %d.\n", slot);
+}
+
+//выбросить предмет
+void action_drop_item(int inv[], int size) {
+    printf("Введите индекс слота для очистки (от 0 до %d): ", size - 1);
+    int slot = get_safe_int();
+    if (slot < 0 || slot >= size) {
+        printf("Ошибка! Неверный индекс слота.\n");
+        return;
+    }
+    inv[slot] = ITEM_EMPTY;
+    printf("Слот %d очищен.\n", slot);
+}
+
+//любимый ресурс
+void action_favorite_resource(const int inv[], const char names[MAX_ITEMS][MAX_NAME_LEN], int size) {
+    printf("=== Поиск любимого ресурса ===\n");
+    int counts[MAX_ITEMS] = {0};
+
+    for (int i = 0; i < size; i++) {
+        if (inv[i] != ITEM_EMPTY) {
+            counts[inv[i]]++;
+        }
+    }
+
+    int max_slots = 0; 
+    int fav_id = -1; 
+    for (int id = 1; id < MAX_ITEMS; id++) {
+        if (counts[id] > max_slots) {
+            max_slots = counts[id];
+            fav_id = id;
+        }
+    }
+
+    if (fav_id == -1 || max_slots == 0) {
+        printf("Рюкзак пуст! Любимый предмет не найден.\n");
+    } else {
+        printf("Любимый ресурс имеет ID: [%d] (%s)\n", fav_id, names[fav_id]);
+        printf("Количество занимаемых слотов: %d\n", max_slots);
+    }
+}
 
 
 
