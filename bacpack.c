@@ -300,7 +300,64 @@ void action_check_recipes(const int inv[], const char names[MAX_ITEMS][MAX_NAME_
     fclose(fout);
     printf("\n[Успех]: Полный отчет о крафте сохранен в файл output.txt!\n");
 
-    
+
+  //ГЛАВНАЯ ФУНКЦИЯ
+
+  int main() {
+    setlocale(LC_ALL, "Russian");
+
+    char farmer_name[MAX_NAME_LEN] = "Аноним";
+    char item_names[MAX_ITEMS][MAX_NAME_LEN];
+    GameTime time = {1, 8}; // Стартовое время: День 1, 8:00 утра
+
+    //загрузка каталога предметов и инициализация рюкзака
+    load_item_catalogue(item_names);
+    int inventory[INVENTORY_SIZE] = {
+        ITEM_WOOD, ITEM_EMPTY, ITEM_STONE, ITEM_SEEDS, ITEM_LEATHER,
+        ITEM_GOLD, ITEM_DIAMOND, ITEM_POTION, ITEM_IRON, ITEM_WOOD
+    };
+
+    //запрос имени фермера строго при старте программы
+    printf("\nДобро пожаловать на ферму! Введите имя вашего персонажа: ");
+    get_safe_string(farmer_name, MAX_NAME_LEN);
+
+    int choice = -1;
+    do {
+        //шапка меню динамически приветствует игрока по имени
+        printf("\n======= ФЕРМА ПЕРСОНАЖА: %s =======\n", farmer_name);
+        printf(" 1. Посмотреть на часы\n");
+        printf(" 2. Промотать время (Поработать)\n");
+        printf(" 3. Посмотреть инвентарь\n");
+        printf(" 4. Положить предмет в слот\n");
+        printf(" 5. Выбросить предмет\n");
+        printf(" 6. Любимый ресурс\n");
+        printf(" 7. Поиск предмета в рюкзаке по названию\n");
+        printf(" 8. Записать состояние в дневник фермера (diary.txt)\n");
+        printf(" 9. Проверить рецепты крафта (input.txt)\n");
+        printf(" 10. Выход\n");
+        printf("Выберите действие (1-10): ");
+
+        choice = get_safe_int();
+        printf("\n");
+
+        switch(choice) {
+            case 1:  action_show_time(time); break;
+            case 2:  action_work(&time); break;
+            case 3:  print_inventory(inventory, item_names, INVENTORY_SIZE); break;
+            case 4:  action_put_item(inventory, INVENTORY_SIZE); break;
+            case 5:  action_drop_item(inventory, INVENTORY_SIZE); break;
+            case 6:  action_favorite_resource(inventory, item_names, INVENTORY_SIZE); break;
+            case 7:  action_search_by_name(inventory, item_names, INVENTORY_SIZE); break;
+            case 8:  action_save_to_diary(farmer_name, time, inventory, item_names, INVENTORY_SIZE); break;
+            case 9:  action_check_recipes(inventory, item_names, INVENTORY_SIZE); break;
+            case 10: printf("Завершение работы программы. До встречи на ферме, %s!\n", farmer_name); break;
+            default: printf("Неверный пункт меню! Выберите число от 1 до 10.\n"); break;
+        }
+    } while (choice != 10); //цикл работает, пока не введут 10
+
+    return 0;
+}
+
 
 
 // вывод содержимого рюкзака на экран
