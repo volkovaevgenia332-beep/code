@@ -122,8 +122,6 @@ void action_put_item(int inv[], const char names[MAX_ITEMS][MAX_NAME_LEN], int s
         printf("Ошибка! Неверный индекс. Допустимый диапазон: 0 - %d\n", size - 1);
         return;
     }
-
-    // ВОТ ЭТОТ БЛОК У ВАС СЕЙЧАС ОТСУТСТВУЕТ — ДОБАВЛЯЕМ ЕГО:
     printf("Доступные предметы для добавления:\n");
     for (int i = 0; i < MAX_ITEMS; i++) {
         printf("  [%d] - %s\n", i, names[i]);
